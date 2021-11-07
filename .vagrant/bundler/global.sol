@@ -1,0 +1,1 @@
+{"dependencies":[["vagrant-group",["= 0.8.2"]]],"checksum":"c687ee594a2135e28eb8303a003f3f98500c87e0a8a5db4a4645cc769d51b939","vagrant_version":"2.2.18"}

@@ -12,10 +12,10 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "generic/debian9"
+  #config.vm.box = "generic/debian9"
 
   # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
+  # b"generic/debian9"oxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
@@ -33,11 +33,11 @@ Vagrant.configure("2") do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
-  config.vm.network "private_network", type: "dhcp" #ip:"192.168.33.10"
+  #config.vm.network "private_network", type: "dhcp" #ip:"192.168.33.10"
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
-  # config.vm.network "public_network"
+  #config.vm.network "public_network"
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -67,4 +67,90 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+
+  #**********************Máquina controle ************************
+  config.vm.define "controle" do |controle|
+    controle.vm.box = "generic/debian9"
+    controle.vm.network  "private_network", ip: "172.17.177.100"
+    controle.vm.hostname = "controle"
+    controle.vm.provider "virtualbox" do |vb|
+      vb.name = "controle"
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+    controle.vm.provision "shell", path: "update.sh"
+    controle.vm.synced_folder ".", "/vagrant", disabled: false
+  end
+  #************************Máquina Web************************
+  config.vm.define "webserver" do |webserver|
+    webserver.vm.box = "generic/debian9"
+    webserver.vm.network  "private_network", ip: "172.17.177.101"
+    webserver.vm.hostname = "webserver"
+    webserver.vm.provider "virtualbox" do |vb|
+      vb.name = "webserver"
+      vb.memory = "512"
+      vb.cpus = 1
+    end
+    webserver.vm.provision "shell", path: "update.sh"
+  end
+#************************Máquina Banco de Dados************************
+  config.vm.define "dataserver" do |dataserver|
+    dataserver.vm.box = "generic/debian9"
+    dataserver.vm.network  "private_network", ip: "172.17.177.102"
+    dataserver.vm.hostname = "dataserver"
+    dataserver.vm.provider "virtualbox" do |vb|
+      vb.name = "dataserver"
+      vb.memory = "512"
+      vb.cpus = 1
+    end
+    dataserver.vm.provision "shell", path: "update.sh"
+  end
+#************************Máquina Master************************
+
+  config.vm.define "master" do |master|
+    master.vm.box = "generic/centos7"
+    master.vm.network  "private_network", ip: "172.17.177.110"
+    master.vm.hostname = "master"
+    master.vm.provider "virtualbox" do |vb|
+      vb.name = "master"
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+  end
+  (1..3).each do |i|
+    config.vm.define "node#{i}" do |node|
+      node.vm.box = "generic/centos7"
+      node.vm.network "private_network", ip: "172.17.177.11#{i}"
+      node.vm.hostname = "node#{i}"
+      node.vm.provider "virtualbox" do |vb|
+      vb.name = "node#{i}"
+      vb.memory = "512"
+      vb.cpus = 1
+    end
+    end
+  end
+# Instalar plugin group vagrant plugin install vagrant-group
+#vagrant group up <group-name>
+#vagrant group up <group-name> --provision
+#vagrant group halt <group-name> --force
+#vagrant group destroy <group-name>
+  config.group.groups = {
+    "controle" => [
+      "controle",
+      ],
+    "webserver" => [
+      "webserver",
+    ],
+    "dataserver" => [
+      "dataserver",
+    ],
+    "master" => [
+      "master",
+    ],
+     "nodes" => [
+      "node1",
+      "node2",
+      "node3",
+    ],
+  }
 end

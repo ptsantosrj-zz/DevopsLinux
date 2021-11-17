@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   #config.vm.box = "generic/debian9"
-
+  #config.vbguest.no_remote = false
   # Disable automatic box update checking. If you disable this, then
   # b"generic/debian9"oxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -129,6 +129,36 @@ Vagrant.configure("2") do |config|
     end
     end
   end
+
+ config.vm.define "pupmaster" do |pupmaster|
+    pupmaster.vm.box = "generic/centos7"
+    pupmaster.vm.network  "private_network", ip: "172.17.177.105"
+    pupmaster.vm.hostname = "pupmaster"
+    pupmaster.vm.provider "virtualbox" do |vb|
+      vb.name = "pupmaster"
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+  end
+
+  config.vm.define "pupagent" do |pupagent|
+    pupagent.vm.box = "geerlingguy/debian9"
+    pupagent.vm.network  "private_network", ip: "172.17.177.106"
+    pupagent.vm.hostname = "pupagent"
+    #pupagent.vbguest.auto_update = false
+    #pupagent.vbguest.no_remote = true
+    pupagent.vm.provider "virtualbox" do |vb|
+      vb.name = "pupagent"
+      vb.memory = "512"
+      vb.cpus = 1
+    end
+    pupagent.vm.provision "shell", inline: "apt update && apt install puppet -y"
+    pupagent.vm.provision "puppet" do |puppet|
+      puppet.manifests_path = "manifests"
+      puppet.manifest_file = "default.pp"
+    end
+  end
+
 # Instalar plugin group vagrant plugin install vagrant-group
 #vagrant group up <group-name>
 #vagrant group up <group-name> --provision

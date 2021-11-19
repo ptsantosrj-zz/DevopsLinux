@@ -103,6 +103,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "512"
       vb.cpus = 1
     end
+
     dataserver.vm.provision "shell", path: "update.sh"
   end
 #************************Máquina Master************************
@@ -117,7 +118,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = 2
     end
   end
-  (1..3).each do |i|
+  (1..2).each do |i|
     config.vm.define "node#{i}" do |node|
       node.vm.box = "generic/centos7"
       node.vm.network "private_network", ip: "172.17.177.11#{i}"
@@ -129,6 +130,7 @@ Vagrant.configure("2") do |config|
     end
     end
   end
+#************************Máquina Puppet Master************************
 
  config.vm.define "pupmaster" do |pupmaster|
     pupmaster.vm.box = "generic/centos7"
@@ -140,6 +142,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = 2
     end
   end
+#************************Máquinas Puppet Agente************************
 
   config.vm.define "pupagent" do |pupagent|
     pupagent.vm.box = "geerlingguy/debian9"
@@ -158,29 +161,42 @@ Vagrant.configure("2") do |config|
       puppet.manifest_file = "default.pp"
     end
   end
+#************************Máquina treinamento linux Geral************************
 
+config.vm.define "docker" do |docker|
+    docker.vm.box = "ubuntu/xenial64"
+    docker.vm.network  "private_network", ip: "172.17.177.120"
+    docker.vm.hostname = "docker"
+    docker.vm.provider "virtualbox" do |vb|
+      vb.name = "docker"
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+  end
+
+#**********************************************************************************
 # Instalar plugin group vagrant plugin install vagrant-group
 #vagrant group up <group-name>
 #vagrant group up <group-name> --provision
 #vagrant group halt <group-name> --force
 #vagrant group destroy <group-name>
-  config.group.groups = {
-    "controle" => [
-      "controle",
-      ],
-    "webserver" => [
-      "webserver",
-    ],
-    "dataserver" => [
-      "dataserver",
-    ],
-    "master" => [
-      "master",
-    ],
-     "nodes" => [
-      "node1",
-      "node2",
-      "node3",
-    ],
-  }
+#  config.group.groups = {
+#    "controle" => [
+#      "controle",
+#      ],
+#    "webserver" => [
+#      "webserver",
+#    ],
+#    "dataserver" => [
+#      "dataserver",
+#    ],
+#    "master" => [
+#      "master",
+#    ],
+#     "nodes" => [
+#      "node1",
+#      "node2",
+#      "node3",
+#    ],
+#  }
 end

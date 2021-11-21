@@ -18,6 +18,6 @@
         shell: /bin/bash
         group: g_ti
         groups: g_diretoria,g_suporte
-        password: '$6$JIrbFwBN$pHx8yCzbYst8lq5WSSucySClfh5Gl8L3ZeHOAPTG2fHuTxB8Qq5mXSUgVXWD54LpEPGznI58ZDv5tVIMCM0FL.'
+        password: '$6$LFUKxtbj$cfXu1EsaFQFLbQAEYX7AOwH6eKVptxpjPhUoZV0jEPYR6nyl/ghYLb1Oxaij4GPholaSD5vKEyYDNKDESnlg90'
         update_password: always
         append: yes  

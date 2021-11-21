@@ -80,6 +80,7 @@ Vagrant.configure("2") do |config|
     end
     controle.vm.provision "shell", path: "update.sh"
     controle.vm.synced_folder ".", "/vagrant", disabled: false
+	controle.vm.synced_folder "./configs", "/var/configs", owner: "root", group: "root"
   end
   #************************Máquina Web************************
   config.vm.define "webserver" do |webserver|
@@ -92,6 +93,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = 1
     end
     webserver.vm.provision "shell", path: "update.sh"
+    webserver.vm.synced_folder "./configs", "/var/configs", owner: "root", group: "root"
   end
 #************************Máquina Banco de Dados************************
   config.vm.define "dataserver" do |dataserver|
@@ -103,8 +105,8 @@ Vagrant.configure("2") do |config|
       vb.memory = "512"
       vb.cpus = 1
     end
-
     dataserver.vm.provision "shell", path: "update.sh"
+    dataserver.vm.synced_folder "./configs", "/var/configs", owner: "root", group: "root"
   end
 #************************Máquina Master************************
 
@@ -117,6 +119,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "2048"
       vb.cpus = 2
     end
+    master.vm.synced_folder "./configs", "/var/configs", owner: "root", group: "root"
   end
   (1..2).each do |i|
     config.vm.define "node#{i}" do |node|
@@ -128,7 +131,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "512"
       vb.cpus = 1
     end
-    end
+    end   
   end
 #************************Máquina Puppet Master************************
 
